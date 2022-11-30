@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Let's watch movie!!!</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" charset="utf-8">
+    <link href="//fonts.googleapis.com/css?family=Lemon" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!--<link href="//djangogirlstaipei.github.io/assets/css/style.css" rel="stylesheet" type="text/css">-->
+
+    <link rel="stylesheet" type="text/css" href="js/slick/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="js/slick/slick/slick-theme.css"/>
+
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/slick/slick/slick.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    
+<script  type="text/javascript">
+
+$(document).ready(function() {
+        init();
+        
+	});
+function init(){
+    var all = document.getElementById("all_id");
+    var prefer = document.getElementById("prefer_id");
+    all.style.display = "";  
+    prefer.style.display = "none";  
+}
+
+function show_prefer(){
+
+    var all = document.getElementById("all_id");
+    var prefer = document.getElementById("prefer_id");
+
+    all.style.display = "none";  
+    prefer.style.display = "";  
+}
+
+var slideIndex = 1;
+showSlides(slideIndex);
+
+function hidePicture(){
+    var slides = document.getElementsByClassName("mySlides");
+    for (var i = 1; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+    }
+}
+
+function changeSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function showSlides(n) {
+  var slides = document.getElementsByClassName("mySlides");
+  
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  
+  for (var i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+
+  slides[slideIndex-1].style.display = "block";  
+}
+
+function selection() {
+
+    console.log("go select");
+    if (action == '0'){
+        var action = "/selection"
+        console.log("go preference");
+        $("#formId").attr("action", action);
+        //$("#formId").submit();
+    }
+    else if (action == '1'){
+        var action = "/"
+        console.log("go recommedn");
+        $("#formId").attr("action", action);
+        //$("#formId").submit();
+    }
+}
+
+function fun1(action) {
+    //alert("this is test");
+    if (action == '0'){
+        var action = "/selection";
+        $("#formId").attr("action", action);
+        $("#formId").submit();
+    }
+    else if (action == '1'){
+        var action = "/";
+        $("#formId").attr("action", action);
+        $("#formId").submit();
+    }
+}
+
+</script>
+</head>
+<body onload="hidePicture();">
+    <div class="header" sytle="position: fixed;top: 0;left: 0;">
+        <h1 class="site-title text-center" >
+            <a href="/">Let's watch movie!!!</a>
+            
+        </h1> 
+    </div>
+    <div class="header-user">
+        {% if user.is_authenticated %}
+            <div class="user-text" style="position: relative;">Welcome {{ user.username }}</div>
+            <input type="hidden"  value="{{user.preference}}">
+            <button class="button" style="width:180px; background-color: #ffffff;display: inline-block;" onclick="location.href='{% url 'logout' %}'">Logout</button>
+            
+                <form id="formId"method="post" action="" style="display: inline-block;">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_name" value="{{ user.username }}">
+                    <input type="hidden" name="preference" value="{{user.preference}}">
+                    <!-- <p><input class="button"  type="button" style="width:180px; background-color: #ffffff" value="Select Preference" onclick="fun1(0)"></p> -->
+                    <p style="display: inline-block;"><input class="button"  type="button" style="width:180px; background-color: #ffffff" value="Recommendation" onclick="fun1(1)"></p>
+                </form>
+            
+            <input class="button"  type="button" style="width:180px; background-color: #ffffff" value="Select Preference" onclick="location.href='/selection'">
+        {% else %}
+            <button class="user-button" onclick="location.href='{% url 'register' %}'">Register</button>
+            <button class="user-button" onclick="location.href='{% url 'login' %}'">Login</button>
+        {% endif %}
+        
+        <p style="display: inline-block;"><input class="button"  style="width:180px;  display: inline-block; background-color: #ffffff;" value="View All" onclick="location.href='/'"></p>
+        <p style="display: inline-block;"><input class="button"  style="width:180px;  display: inline-block; background-color: #ffffff;" value="Rank" onclick="location.href='/rank'"></p>
+    </div>
+    
+    
+
+    <div class="slideshow-container">
+            <a class="prev"  onclick="changeSlides(-1)"><img src="{% static 'images/arrow_left.png' %}"></a>
+            {% for post in rank_list %}
+            <div class="mySlides" >
+              <!-- <div class="date" value="">TOP</div> -->
+              <h2 class="title" style="display: inline-block;color: #60482a;">LIKE : </h2>&nbsp;
+              {% if post.movie_score > 59 %}
+                <h2 class="title" style="display: inline-block;color: #00DD00">{{post.movie_score}} </h2>&nbsp;
+              {% else %}
+                <h2 class="title" style="display: inline-block;color: #FF0000">{{post.movie_score}} </h2>&nbsp;
+              {% endif %}
+              <h2 class="title" style="display: inline-block;color: #60482a;">%</h2>
+              <br>
+              <img src="{{post.photo}}" class="topImage">
+              
+            </div>
+            {% endfor %}
+            
+            <a class="next" style="display: inline;"  onclick="changeSlides(1)"><img src="{% static 'images/arrow_right.png' %}"></a>
+            
+    </div>
+    <div class="container">
+
+        <div>
+            <div id="all_id"><h2 class="view-title">{{ view_text }}</h2></div>
+        </div>
+
+        {% for post, num in list %}
+        <div class="post-wrapper">
+            <div class="post">
+                <div class="post-heading">
+                    <h2 class="title">
+                        <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
+                    </h2>
+                    <div class="date">{{ post.created_at|date:"Y / m / d" }}</div>
+                </div>
+                {% if post.photo %}
+                <div  class="thumbnail" >
+                    <img src="{{ post.photo }}" alt="">
+                </div>
+                {% else %}
+                <div class="thumbnail thumbnail-default"></div>
+                {% endif %}
+                <div class="post-content read-more-block">
+                    {{ post.content }}
+                </div>
+                <div class="post-num">
+                        <h2 >{{num}} comments</h2>
+                </div>
+                <!-- <div class="post-num">
+                         <h2 >{{ post.movie_type}}</h2>
+                </div> -->
+                <div class="post-footer">
+                    <a class="read-more" href="{% url 'post_detail' pk=post.pk %}">
+                        Read More <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+        {% endfor %}
+        
+
+        
+    </div>
+</body>
+</html>

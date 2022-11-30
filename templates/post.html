@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ post.title }} | Let's watch movie!!!</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" charset="utf-8">
+    <link href="//fonts.googleapis.com/css?family=Lemon" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    /*$(document).ready(function() {
+        setTimeout("init()",20);
+	});*/
+
+    $(document).ready( function() {
+        $('div.score').each(function() {
+            //setTimeout("init()",20);
+            init.call($(this));
+        });
+    });
+	function init(){
+        var oDiv = document.getElementById("score");
+        console.log($("#score").val());
+        //console.log("trytry");
+        if($("#score").val()=="good")
+        {
+            oDiv.style.background = 'blue';
+            console.log("trytrygood");
+        }
+        else if($("#score").val()=="bad")
+        {
+            console.log("badtry");
+        }
+    }	
+    function getMovie(movieName, pk){
+        console.log(movieName);
+		$("#movie_name").val(movieName);
+        $("#pk").val(pk);
+        console.log($("#movie_name").val());
+	}
+</script>
+</head>
+<body>
+    <div class="header">
+        <h1 class="site-title text-center">
+            <a href="/">Let's watch movie!!!</a>
+        </h1>
+    </div>
+    <div class="container post post-detail">
+        <div class="post-heading">
+            <h1 class="title">{{ post.title }}</h1>
+            <div class="date">{{ post.created_at|date:'Y / m / d' }}</div>
+        </div>
+        <div class="location">
+            <!-- <i class="fa fa-map-marker"></i> -->
+            <span id="location-content">Trailer</span>
+        </div>
+        <div class="post-video">
+            <iframe src="{{ post.video_href}}" allowfullscreen width="750" height="400"></iframe>
+        </div>
+        <div class="post-content">
+            {{ post.content }}
+        </div>
+        <hr class="fancy-line">
+        <img class="photo" src="{{ post.photo }}" alt="Cover photo for {{ post.title }}">
+
+        <div class="post-heading">
+            <h1 class="title">Comment:</h1>
+        </div>
+        
+        
+      <!--  <div class='container'>
+            <form method="post" action="/linkWeb">
+                
+                <div class="input-comment">
+                    {% csrf_token %}
+                    <input type="hidden" name="movie_name" id="movie_name" value="">
+                    <input type="hidden" name="pk" id="pk" value="">
+                    <div class="comment-button-div">
+                        <button class="comment-button" onclick="getMovie('{{ post.title }}','{{post.pk}}')">LINK TO WEB</button>
+                    </div>
+                    
+                </div>
+                    
+            </form>
+            -->
+            {% if user.is_authenticated %}
+            <div class="comment-button-div">
+                <button class="button" onclick="location.href='/linkWeb?pk={{post.pk}}'">LINK TO WEB</button>
+            </div>
+            
+            <form method="post" action="/newComment">
+                
+                <div class="input-comment">
+                    {% csrf_token %}
+                    <textarea  class="input-comment-textarea" type="text" name="comment_text" value="comment"></textarea>
+                    <input type="hidden" name="movie_name" id="movie_name" value="">
+                    <input type="hidden" name="pk" id="pk" value="">
+                    <div class="comment-button-div">
+                        <button class="button"  style="background-color: #04cac4;color: #fff;"type="submit" onclick="getMovie('{{ post.title }}','{{post.pk}}')">SUBMIT</button>
+                    </div>
+                </div>
+                
+            </form>
+            {% endif %}
+            
+        <!--{{post.pk}}-->
+        <!--<button class="comment-button"  onclick="getMovie('{{ post.title }}')">test</button>-->
+        {% for comment in comment_list %}
+        <div class="comment-block">
+            <div class="post-content read-more-block">
+                <div class="comment-text">
+                        {{ comment.comment_text }}
+                </div>
+                <div class="score-{{ comment.score }}">{{ comment.score }}</div>
+                <div class="date">{{ comment.comment_time|date:'Y / m / d' }}</div>
+                <input type="hidden" id ="score" value="{{ comment.score }}">
+                
+            </div>
+        </div>
+        {% endfor%}
+        <div id="pages" class="page-number" >
+            <nav>
+                <span class="current-page">
+                    Page {{ comment_list.number }} of {{ comment_list.paginator.num_pages }}</span>
+            </nav>
+        </div>
+
+            
+        <div id="pages" class="page-number" >
+            <nav>   
+                {% if comment_list.has_previous %}
+                    <button class="button" onclick="location.href='?pk={{post.pk}}&page={{ comment_list.previous_page_number }}'">Previous Page</button>
+                {% endif %}
+                {% if comment_list.number != 1%}
+                    <button class="page-button" onclick="location.href='?page={{ 1 }}'">{{ 1 }}</button>
+                {% endif %}
+
+                {% for page_number in page_range %}
+         
+                    {% if page_number == comment_list.number %}
+                        <button class="current-page-button" onclick="location.href='?page={{ page_number }}'">{{ page_number }}</button>
+                    {% elif page_number == 1 or  page_number == last_page %}
+
+                    {% else %}
+                        <button class="page-button" onclick="location.href='?page={{ page_number }}'">{{ page_number }}</button>
+                    {% endif %}
+         
+                {% endfor %}
+
+                {% if comment_list.number != last_page %}
+                    <button class="page-button" onclick="location.href='?page={{ last_page }}'">{{ last_page }}</button>
+                {% endif %}
+                {% if comment_list.has_next %}
+                    <button class="button" onclick="location.href='?pk={{post.pk}}&page={{ comment_list.next_page_number }}'">Next Page</button>
+                {% endif %}
+                </nav>
+        </div>
+            
+
+        
+    </div>
+
+    
+
+    
+
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&sensor=false"></script>
+    <script src="//djangogirlstaipei.github.io/assets/js/map.js"></script>
+</body>
+</html>

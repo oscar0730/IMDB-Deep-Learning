@@ -1,0 +1,114 @@
+
+
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ post.title }} | Let's watch movie!!!</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" charset="utf-8">
+    <link href="//fonts.googleapis.com/css?family=Lemon" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    /*$(document).ready(function() {
+        setTimeout("init()",20);
+	});*/
+
+    $(document).ready( function() {
+        $('div.score').each(function() {
+            //setTimeout("init()",20);
+            init.call($(this));
+        });
+    });
+    function getAction() {
+        var action = "{% url 'home' %}"
+        console.log("btn click");
+        $("#formId").attr("action", action);
+        //$("#formId").submit();
+    }
+
+    function stack(input) {
+        var num = input.toString();
+        var string = $("#preferId").val()
+        //console.log(typeof string);
+        //console.log(num);
+        if(string.indexOf(num)>=0){
+            console.log("already have");
+            num = num + ',';
+            string = string.replace(num,"");
+            change_btn1(input);
+        }
+        else{
+            console.log("new number");
+            string = string + num + ',';
+            change_btn2(input);
+        }
+        //string = string.substring(0, string.length-1);
+        $("#preferId").val(string);
+        //console.log(string);
+        console.log($("#preferId").val());
+    }
+
+    function change_btn2(input) {
+        var type = "type" + input.toString();
+        console.log("change color");
+        //console.log($("#type1").val());
+        document.getElementById(type).style.backgroundColor = '#FFCC22';
+    }
+    function change_btn1(input) {
+        var type = "type" + input.toString();
+        console.log("change color");
+        document.getElementById(type).style.backgroundColor = '#DDDDDD';
+    }
+</script>
+</head>
+<body>
+    <div class="header">
+        <h1 class="site-title text-center">
+            <a href="/">Let's watch movie!!!</a>
+        </h1>
+    </div>
+    <div class="header-user">
+            <div class="user-text">Welcome {{ user.username }}</div>
+               
+    </div>
+    <div class="container post post-detail" style="width: 600px;">
+        
+            <div class="post-heading" style="text-align:center;">
+                <h1 class="title">Choice Your Preference</h1>
+                <!-- <div class="date">{{ post.created_at|date:'Y / m / d' }}</div> -->
+            </div> 
+            <div ></div>
+            
+                <form method="post" id="formId" action="/" class="login-content" >
+                {% csrf_token %}
+                <div style="padding: 0 50px 0 50px;">
+                        <input class="prefer-button" id="type1" type="button" value="Action Film" onclick="stack(1)">
+                        <input class="prefer-button" id="type2" type="button" value="Romantioc Film" onclick="stack(2)"><br>
+                        <input class="prefer-button" id="type3" type="button" value="Comedy Film" onclick="stack(3)">
+                        <input class="prefer-button" id="type4" type="button" value="Animation Film" onclick="stack(4)"><br>
+                        <input class="prefer-button" id="type5" type="button" value="Horror Film" onclick="stack(5)">
+                        <input class="prefer-button" id="type6" type="button" value="Hero Film" onclick="stack(6)"><br>
+                        <input class="prefer-button" id="type7" type="button" value="Drama" onclick="stack(7)">
+                        <input class="prefer-button" id="type8" type="button" value="Documentary" onclick="stack(8)">
+                    <input id="preferId" name="preference" type="hidden" value="">
+                    <input  name="user_name" type="hidden" value="{{ user.username }}">
+                    
+                </div>
+                <input class="button" type="submit" value="Send" >
+                </form>
+            
+            </div>
+    </div>
+
+    
+
+    
+
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&sensor=false"></script>
+    <script src="//djangogirlstaipei.github.io/assets/js/map.js"></script>
+</body>
+</html>

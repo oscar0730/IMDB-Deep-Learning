@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ post.title }} | Let's watch movie!!!</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" charset="utf-8">
+    <link href="//fonts.googleapis.com/css?family=Lemon" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+    /*$(document).ready(function() {
+        setTimeout("init()",20);
+	});*/
+
+    $(document).ready( function() {
+        $('div.score').each(function() {
+            //setTimeout("init()",20);
+            init.call($(this));
+        });
+    });
+	function init(){
+        var oDiv = document.getElementById("score");
+        console.log($("#score").val());
+        //console.log("trytry");
+        if($("#score").val()=="good")
+        {
+            oDiv.style.background = 'blue';
+            console.log("trytrygood");
+        }
+        else if($("#score").val()=="bad")
+        {
+            console.log("badtry");
+        }
+    }	
+    function getMovie(movieName, pk){
+        console.log(movieName);
+		$("#movie_name").val(movieName);
+        $("#pk").val(pk);
+        console.log($("#movie_name").val());
+	}
+</script>
+</head>
+<body>
+    <div class="header">
+        <h1 class="site-title text-center">
+            <a href="/">Let's watch movie!!!</a>
+        </h1>
+    </div>
+    <div class="container post post-detail">
+        <div class="post-heading">
+            <h1 class="title">{{ post.title }}</h1>
+            <!-- <div class="date">{{ post.created_at|date:'Y / m / d' }}</div> -->
+        </div>
+        
+        
+        <hr class="fancy-line">
+        <img class="photo" src="{{ post.photo }}" alt="Cover photo for {{ post.title }}">
+        <div class="post-heading">
+            <h1 class="title">Link Success!!!</h1>
+        </div>
+        <!-- <div class="post-content">
+            {{ comment }}
+        </div> -->
+        
+        
+      
+            <div class="comment-button-div">
+                <button class="button" onclick="location.href='/post/{{post.pk}}'">BACK TO MOVIE</button>
+                <button class="button" onclick="location.href='/'">BACK TO HOME</button>
+            </div>
+            
+            
+            
+        <!--{{post.pk}}-->
+        <!--<button class="comment-button"  onclick="getMovie('{{ post.title }}')">test</button>-->
+       
+    </div>
+
+    
+
+    
+
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&sensor=false"></script>
+    <script src="//djangogirlstaipei.github.io/assets/js/map.js"></script>
+</body>
+</html>
